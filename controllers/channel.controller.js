@@ -1,27 +1,26 @@
-const channel = require('../models/channel.model.js');
+const Channel = require('../models/channel.model.js');
 
 // Create and Save a new channel
 exports.create = (req, res) => {
 // Validate request
-    if(!req.body.content) {
+    if(!req.body.name) {
         return res.status(400).send({
-            message: "Note content can not be empty"
+            message: ":( Você deve digitar um nome para o canal"
         });
     }
 
     // Create a Note
     const channel = new Channel({
-        name: "#" + (req.body.name || "Untitled"), 
-        content: req.body.content
+        name: "#" + (req.body.name || "Untitled")
     });
 
     // Save Note in the database
-    note.save()
+    channel.save()
     .then(data => {
         res.send(data);
     }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the Note."
+            message: err.message || "Some error occurred while creating the channel."
         });
     });
 };
@@ -45,4 +44,3 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
 
 };
-
