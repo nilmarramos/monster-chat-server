@@ -1,10 +1,18 @@
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 
 // create express app
 const app = express();
 
+app.use(cors())
+
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -29,7 +37,7 @@ mongoose.connect(dbConfig.url)
 
 // define a simple route
 app.get('/', (req, res) => {
-    res.json({"message": "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes."});
+    res.json({"message": "Silence is gold"});
 });
 
 require('./routes/user.routes.js')(app);

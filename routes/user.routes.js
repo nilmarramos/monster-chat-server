@@ -1,22 +1,23 @@
-var jwt = require('jsonwebtoken');
 
 module.exports = (app) => {
-    const users = require('../controllers/user.controller.js');
+    const User = require('../controllers/user.controller.js');
 
     // Create a new user
-    app.post('/users', users.create);
+    app.post('/users', User.create);
 
-    app.get('/users/login', users.auth)
+    app.post('/users/login', User.auth)
 
     // Retrieve all users
-    app.get('/users', users.findAll);
+    app.get('/users', User.findAll);
+
+    app.get('/auth/user', User.userData);
 
     // Retrieve a single user with userId
-    app.get('/users/:userId', users.findOne);
+    app.get('/users/:userId', User.findOne);
 
     // Update a user with userId
-    app.put('/users/:userId', users.update);
+    app.put('/users/:userId', User.update);
 
     // Delete a user with userId
-    app.delete('/users/:userId', users.delete);
+    app.delete('/users/:userId', User.delete);
 }

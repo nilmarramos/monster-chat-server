@@ -1,5 +1,6 @@
 const User = require('../models/user.model.js');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Create and Save a new user
 exports.create = (req, res) => {
@@ -29,19 +30,20 @@ exports.create = (req, res) => {
 };
 
 exports.auth = (req, res) => {
+  console.log('auth')
   let userData;
   if(req.body.username) {
     userData = {
-      username: req.body.username,
-      password: bcrypt.hashSync(req.body.password, 10),
+      username: req.body.username
     }
   }
   else {
     userData = {
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10),
+      email: req.body.email
     }
   }
+
+  console.log(userData)
   User.findOne(userData)
       .then(user => {
           if(!user) {
@@ -49,15 +51,30 @@ exports.auth = (req, res) => {
                   message: "user not found "
               });
           }
-        let token =  jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + (60 * 60),
-        data: user
-      }, 'monster-chat', function(err, token) {
-        console.log(token);
-        return token
-        });
-        console.log(token)
-          res.send({"token": token});
+          else {
+            console.log(user)
+            bcrypt.compare(req.body.password, user.password).then(function(result) {
+              if(result == true){
+              let token =  jwt.sign({
+              exp: Math.floor(Date.now() / 1000) + (60 * 60),
+              data: user
+            }, 'monster-chat', function(err, token) {
+              console.log(token)
+              return res.status(200).send({
+                  token: token
+              });
+              });
+
+              }
+              else {
+                return res.status(404).send({
+                    message: "wrong password "
+                });
+              }
+            });
+
+          }
+
       }).catch(err => {
           if(err.kind === 'ObjectId') {
               return res.status(404).send({
@@ -73,6 +90,17 @@ exports.auth = (req, res) => {
 
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
+
+};
+
+exports.userData = (req, res) => {
+  if(req.header('token')) {
+    var decoded = jwt.decode(req.header('token'));
+    return res.send(decoded.data)
+  }
+  else {
+    return res.send({})
+  }
 
 };
 
