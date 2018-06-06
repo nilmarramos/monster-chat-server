@@ -2,9 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const consign = require('consign');
 const jwt = require('jsonwebtoken');
+var cors = require('cors')
 
 // create express app
 const app = express();
+
+app.use(cors())
 
 // port
 app.set('port', process.env.PORT || 3000);
